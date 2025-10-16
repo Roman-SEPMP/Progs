@@ -1,0 +1,9 @@
+
+a = 105
+numbers = [3, 5, 7]
+output = str(a) + ' = ' + " * ".join([str(num) for num in numbers])
+print(output)
+
+
+numbers = [2]
+degrees = [10]
