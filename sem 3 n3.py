@@ -1,17 +1,18 @@
 a = int(input())
 b = int(input())
+a1 = a
+b1 = b
 while a != 0 and b !=0:
     if a > b:
         a = a % b
     else:
-        b = b
+        b = b % a
     d = (a + b)
-print(d)
 
 ms = 0
 for x in range(-d, d):
-    if (d - a * x) % b == 0:
-        y = (d - a * x) % b
+    if (d - a1 * x) % b1 == 0:
+        y = (d - a1 * x) % b1
         s = x + y
         if ms <= s:
             ms = s
