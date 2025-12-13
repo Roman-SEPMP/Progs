@@ -1,21 +1,32 @@
-n, m = tuple(map(int, input().split()))
-D = [list(map(int, input().split())) for _ in range(n)]
+a, b = input().split()
+a = int(a)
+b = int(b)
+a1 = a
+b1 = b
 
-INF = 1e10
-F = [[-INF] * m for _ in range(n)]
-F[0][0] = D[0][0]
-if n > 1:
-    F[1][0] = D[1][0] + D[0][0]
-if m > 1:
-    F[0][1] = D[0][1] + D[0][0]
+# исправление №1 — правильный алгоритм Евклида
+while a != 0 and b != 0:
+    if a > b:
+        a %= b
+    else:
+        b %= a
+d = a + b   # одно из чисел стало 0 → сумма = НОД
 
-for y in range(1, n):
-    for x in range(1, m):
-        F[y][x] = max(F[y-1][x], F[y][x-1], F[y-1][x-1]) + D[y][x]
-        if y+1 < n and F[y][x] == F[y-1][x] + D[y][x]:
-            F[y+1][x] = -INF
-        if x+1 < m and F[y][x] == F[y][x-1] + D[y][x]:
-            F[y][x+1] = -INF
-        if x+1 < m and y+1 < n and F[y][x] == F[y-1][x-1] + D[y][x]:
-            F[y+1][x+1] = -INF
-print(F[-1][-1])
+best_x = None
+best_y = None
+best_s = None
+
+# оставляем твою идею перебора, только исправляем ошибки
+for x in range(-d*5, d*5 + 1):
+    # проверяем, существует ли целый y
+    if (d - a1 * x) % b1 == 0:
+        y = (d - a1 * x) // b1
+
+        s = abs(x) + abs(y)
+
+        if (best_s is None) or (s < best_s) or (s == best_s and x < best_x):
+            best_s = s
+            best_x = x
+            best_y = y
+
+print(best_x, best_y, d)

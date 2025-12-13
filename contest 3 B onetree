@@ -1,48 +1,75 @@
 class Node:
     def __init__(self, key, value):
-        self.key = key
-        self.value = value
+        self.key = key      # ключ (герой или артефакт)
+        self.value = value  # значение (артефакт или герой)
         self.left = None
         self.right = None
+
 
 class BST:
     def __init__(self):
         self.root = None
 
     def __find(self, node, parent, key):
+        """
+        Ищет key в дереве и возвращает (node, parent, found):
+        - node: найденный узел или место, куда надо вставлять
+        - parent: родитель node
+        - found: True, если ключ найден, False если нет
+        """
+
         if node is None:
             return None, parent, False
+
         if key == node.key:
             return node, parent, True
+
         if key < node.key:
             if node.left:
                 return self.__find(node.left, node, key)
             else:
-                return node, parent, False
-        else:
+                return node, parent, False  # вставлять слева от node
+
+        else:  # key > node.key
             if node.right:
                 return self.__find(node.right, node, key)
             else:
-                return node, parent, False 
+                return node, parent, False  # вставлять справа от node
 
     def append(self, key, value):
+        """
+        Вставляет пару (key, value).
+        Если ключ уже существует — обновляет value.
+        """
+
         new_node = Node(key, value)
+
+        # если дерево пустое
         if self.root is None:
             self.root = new_node
             return new_node
+
         node, parent, found = self.__find(self.root, None, key)
+
+        # если ключ уже есть — обновим значение
         if found:
             node.value = value
             return node
+
+        # иначе вставляем рядом с node
         if key < node.key:
             node.left = new_node
         else:
             node.right = new_node
+
         return new_node
-    
+
     def search(self, key):
+        """
+        Ищет ключ и возвращает value или None.
+        """
         node = self.root
-        while node is not None:
+        while node:
             if key == node.key:
                 return node.value
             elif key < node.key:
@@ -50,53 +77,34 @@ class BST:
             else:
                 node = node.right
         return None
-
-
-### --- Две таблицы на BST ---
+    
 class HeroArtifactRegistry:
     def __init__(self):
         self.hero_tree = BST()   # герой -> артефакт
         self.art_tree = BST()    # артефакт -> герой
 
     def add_pair(self, hero, artifact):
-        self.hero_tree.insert(hero, artifact)
-        self.art_tree.insert(artifact, hero)
+        self.hero_tree.append(hero, artifact)
+        self.art_tree.append(artifact, hero)
 
     def get_artifact(self, hero):
         return self.hero_tree.search(hero)
 
     def get_hero(self, artifact):
         return self.art_tree.search(artifact)
-
-
-### --- Основная программа (самый простой ввод) ---
+    
 reg = HeroArtifactRegistry()
 
-# количество героев
 N = int(input())
-
-# читаем N строк вида: hero artifact
 for _ in range(N):
     hero, artifact = input().split()
     reg.add_pair(hero, artifact)
 
-# количество запросов
 Q = int(input())
-
-# обрабатываем Q запросов
 for _ in range(Q):
-    query = input().strip()
-
-    # сначала пробуем как героя
+    query = input()
     ans = reg.get_artifact(query)
     if ans is not None:
         print(ans)
-        continue
-
-    # иначе пробуем как артефакт
-    ans = reg.get_hero(query)
-    if ans is not None:
-        print(ans)
-        continue
-        
-        
+    else:
+        print(reg.get_hero(query))
